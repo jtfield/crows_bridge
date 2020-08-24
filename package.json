@@ -10,6 +10,7 @@
   "dependencies": {
     "mysql": "^2.18.1",
     "next": "9.5.2",
+    "passport-steam": "^1.0.14",
     "react": "16.13.1",
     "react-dom": "16.13.1"
   }
