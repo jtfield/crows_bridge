@@ -1,4 +1,4 @@
-import { mySQLClient } from './../../util/mysql';
+import { mySQLClient } from '../../util/mysql';
 
 const numGamesPerPage = 50;
 
@@ -10,6 +10,7 @@ export default async (req, res) => {
     connection = await mySQLClient();
   } catch (error) {
     const message = `Failed to make MySQL connection: ${error.message}`;
+    // eslint-disable-next-line no-console
     console.error(message);
     res.statusCode = 500;
     res.json({ error: message });
@@ -26,10 +27,11 @@ export default async (req, res) => {
     res.json({ games });
   } catch (error) {
     const message = `Query failed: ${error.message}`;
+    // eslint-disable-next-line no-console
     console.error(message);
     res.statusCode = 500;
     res.json({ error: message });
   }
 
   connection.release();
-}
+};
