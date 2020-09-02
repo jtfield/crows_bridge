@@ -22,6 +22,30 @@ passport.use(
   createSteamStrategy((identifier, profile, done) => {
     // TODO -- look in mysql to see if the profile.id exists, if it does,
     // return it, otherwise, create a new one.
+    // SPOON! Here is where we will use our MYSQL library to query the user by either
+    // "identifier" or "profile.id", I don't know what PunkUser was using but we should
+    // match whatever he used since we'll be migrating those records over.
+    // here is some pseudo code:
+
+    // try {
+    //   const connection = await mySQLClient();
+    //   const existingUser = await connection.query(`
+    //     SELECT from accounts where id = ${identifier}
+    //   `);
+    //   if (!existingUser) {
+    //     const password = generateRandomSixDigitPassword();
+    //     const createdUser = await connection.query(
+    //       // The login ID should auto-increment in your MYSQL table for you.
+    //       // Al
+    //       'INSERT into accounts... blah blah'
+    //     );
+    //     return done(null, createdUser);
+    //   }
+    //   return done(null, existingUser);
+    // } catch (err) {
+    //   // something went wrong, return an error back.
+    //   return done(err);
+    // }
     return done(null, { id: profile.id });
   })
 );
