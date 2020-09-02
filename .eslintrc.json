@@ -1,0 +1,67 @@
+{
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx"]
+      }
+    }
+  },
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true,
+    "jest": true
+  },
+  "extends": ["plugin:react/recommended", "airbnb", "plugin:prettier/recommended"],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "react-hooks", "prettier"],
+  "rules": {
+    "func-names": ["off"],
+    "import/extensions": ["error", "ignorePackages", { "js": "never", "jsx": "never", "ts": "never", "tsx": "never" }],
+    "no-empty-function": ["off"],
+    "no-useless-constructor": ["off"],
+    "import/prefer-default-export": ["off"],
+    "import/no-extraneous-dependencies": ["off"],
+    "jsx-a11y/click-events-have-key-events": ["off"],
+    "jsx-a11y/interactive-supports-focus": ["off"],
+    "max-len": ["error", 160],
+    "no-plusplus": ["off"],
+    "no-restricted-syntax": ["off"],
+    "no-unused-expressions": "off",
+    "consistent-return": "off",
+    "no-unused-vars": "warn",
+    "react/jsx-filename-extension": ["off"],
+    "react/react-in-jsx-scope": ["off"],
+    "react/forbid-prop-types": ["off"],
+    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/rules-of-hooks": "error",
+    "react/jsx-one-expression-per-line": ["off"],
+    "react/jsx-props-no-spreading": ["off"],
+    "react/jsx-wrap-multilines": ["off"],
+    "react/no-unescaped-entities": ["off"],
+    "react/prop-types": ["off"],
+    "react/require-default-props": ["off"],
+    "jsx-quotes": ["warn", "prefer-single"],
+    "quotes": ["warn", "single"],
+    "semi": ["warn"],
+    "prettier/prettier": [
+      "warn",
+      {
+        "singleQuote": true,
+        "jsxSingleQuote": true,
+        "printWidth": 120,
+        "trailingComma": "es5"
+      }
+    ]
+  }
+}

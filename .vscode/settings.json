@@ -1,0 +1,22 @@
+{
+  "editor.formatOnSave": false,
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.tabSize": 2,
+  "eslint.enable": true,
+  "files.autoSave": "off",
+  "files.insertFinalNewline": true,
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.git": true,
+    "server-build/**": true,
+    "node_modules/**": true,
+    "build/**": true,
+    "package-lock.json": true
+  },
+  "javascript.preferences.importModuleSpecifier": "relative",
+  "editor.codeActionsOnSave": {
+		"source.fixAll": true,
+		"source.fixAll.eslint": true
+  },
+  "eslint.format.enable": true
+}
