@@ -1,3 +1,4 @@
+import SQLFormat from 'sql-template-strings';
 import { mySQLClient } from '../../util/mysql';
 
 const numGamesPerPage = 50;
@@ -5,20 +6,9 @@ const numGamesPerPage = 50;
 export default async (req, res) => {
   const pageNum = req.query.pageNum || 1;
   const startingPage = numGamesPerPage * (pageNum - 1);
-  let connection;
-  try {
-    connection = await mySQLClient();
-  } catch (error) {
-    const message = `Failed to make MySQL connection: ${error.message}`;
-    // eslint-disable-next-line no-console
-    console.error(message);
-    res.statusCode = 500;
-    res.json({ error: message });
-    return;
-  }
 
   try {
-    const games = await connection.query(`
+    const games = await mySQLClient.query(SQLFormat`
       SELECT * from metaserver_games
         ORDER BY end_datetime DESC
         LIMIT ${startingPage}, ${numGamesPerPage}
@@ -32,6 +22,4 @@ export default async (req, res) => {
     res.statusCode = 500;
     res.json({ error: message });
   }
-
-  connection.release();
 };
