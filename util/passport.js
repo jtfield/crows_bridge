@@ -28,13 +28,12 @@ passport.use(
     // here is some pseudo code:
 
     // try {
-    //   const connection = await mySQLClient();
-    //   const existingUser = await connection.query(`
+    //   const existingUser = await mySQLClient.query(`
     //     SELECT from accounts where id = ${identifier}
     //   `);
     //   if (!existingUser) {
     //     const password = generateRandomSixDigitPassword();
-    //     const createdUser = await connection.query(
+    //     const createdUser = await mySQLClient.query(
     //       // The login ID should auto-increment in your MYSQL table for you.
     //       // Al
     //       'INSERT into accounts... blah blah'
