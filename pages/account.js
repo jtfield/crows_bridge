@@ -13,10 +13,12 @@ export default function Account(props) {
       </Head>
       <section className={utilStyles.headingMd}>
         {(() => {
-          if (user && user.id) {
+          if (user && user.steamid) {
             return (
               <>
-                <p>user id {user.id}</p>
+                <p>user id {user.steamid}</p>
+                <p>username {user.uname}</p>
+                <p>password {user.upw}</p>
                 <p>
                   <a href='/api/auth/logout'>Sign out</a>
                 </p>
