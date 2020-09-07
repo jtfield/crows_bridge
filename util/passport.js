@@ -114,7 +114,6 @@ function makePw(length) {
   return result;
 }
 
-
 // Configure Passport authenticated session persistence.
 //
 // In order to restore authentication state across HTTP requests, Passport needs
