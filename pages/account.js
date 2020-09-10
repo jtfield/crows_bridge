@@ -1,10 +1,25 @@
 import Head from 'next/head';
 import nextCookie from 'next-cookies';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import Layout, { siteTitle } from '../components/layout';
 import utilStyles from '../styles/utils.module.css';
 
 export default function Account(props) {
-  const { user } = props;
+  const { user, authError } = props;
+  const router = useRouter();
+
+  useEffect(
+    () => {
+      // Remove the query parameter so users are not stuck in this state
+      // when refreshing.
+      if (router.query.authError) {
+        router.replace('/account', 'account', { shallow: true });
+      }
+    },
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    [router.query.authError]
+  );
 
   return (
     <Layout>
@@ -34,6 +49,9 @@ export default function Account(props) {
                   <img src='/images/steam_login.png' alt='thing' className='logo' />
                 </a>
               </p>
+              {authError && (
+                <p style={{ color: 'red', fontSize: 12 }}>Authentication with Steam failed due to server error.</p>
+              )}
             </>
           );
         })()}
@@ -53,9 +71,11 @@ const getUser = (context) => {
 };
 
 export async function getServerSideProps(context) {
+  const { authError } = context.query;
   return {
     props: {
       user: getUser(context) || null,
+      authError: Boolean(authError),
     },
   };
 }

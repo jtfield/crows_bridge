@@ -19,100 +19,60 @@ const createSteamStrategy = (callback) => {
   return steamStrategy;
 };
 
-// passport.use(
-//   createSteamStrategy((identifier, profile, done) => {
-//     // TODO -- look in mysql to see if the profile.id exists, if it does,
-//     // return it, otherwise, create a new one.
-//     // SPOON! Here is where we will use our MYSQL library to query the user by either
-//     // "identifier" or "profile.id", I don't know what PunkUser was using but we should
-//     // match whatever he used since we'll be migrating those records over.
-//     // here is some pseudo code:
-
-//     // try {
-//     //   const connection = await mySQLClient();
-//     //   const existingUser = await connection.query(`
-//     //     SELECT from accounts where id = ${identifier}
-//     //   `);
-//     //   if (!existingUser) {
-//     //     const password = generateRandomSixDigitPassword();
-//     //     const createdUser = await connection.query(
-//     //       // The login ID should auto-increment in your MYSQL table for you.
-//     //       // Al
-//     //       'INSERT into accounts... blah blah'
-//     //     );
-//     //     return done(null, createdUser);
-//     //   }
-//     //   return done(null, existingUser);
-//     // } catch (err) {
-//     //   // something went wrong, return an error back.
-//     //   return done(err);
-//     // }
-//     return done(null, { id: profile.id });
-//   })
-// );
-
+// Function to generate random strings of characters for a specific length
+function makePw(length) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
 
 passport.use(
   createSteamStrategy(async (identifier, profile, done) => {
     try {
-      const connection = await mySQLClient();
-      
-      const existingUser = await connection.query(`
+      const existingUser = await mySQLClient.query(`
         SELECT * FROM metaserver_login_tokens where steam_id = ${profile.id}
       `);
 
       if (!existingUser) {
         const password = makePw(6);
-        const rowNum = await connection.query(`
+        const rowNum = await mySQLClient.query(`
           SELECT COUNT(*) from metaserver_users
         `);
 
         const newLoginNum = (1 + Number(rowNum)).toString;
-        
-        const newLogin = 'u' + newLoginNum;
-        
-        const insertUserInfo = await connection.query(`
+
+        const newLogin = `u${newLoginNum}`;
+
+        await mySQLClient.query(`
           INSERT INTO metaserver_users (nick_name, team_name, city, state, country, quote)
           VALUES('default', 'default\'s Team', 'default', 'default', 'default', 'default')
         `);
-        
-        const insertUser = await connection.query(`
+
+        const insertedUser = await mySQLClient.query(`
           INSERT INTO metaserver_login_tokens (steam_id, user_name_token, password_token)
           VALUES(${profile.id}, ${newLogin}, ${password})
         `);
-        
-        return done(null, insertUser);
-      
+
+        return done(null, insertedUser);
       }
-      //If profile does exist: query the tokens and return some stuff
 
-      //console.log(existingUser[0].user_id);
-
-      const userID = existingUser[0].user_id;
+      // If profile does exist: query the tokens and return some stuff
       const username = existingUser[0].user_name_token;
       const userpw = existingUser[0].password_token;
 
-      //return done(null, { id: profile.id });
+      // return done(null, { id: profile.id });
       return done(null, { steamid: profile.id, uname: username, upw: userpw });
-      
     } catch (err) {
       // something went wrong, return an error back.
       return done(err);
     }
-    //return done(null, { id: profile.id });
+    // return done(null, { id: profile.id });
   })
 );
-
-//Function to generate random strings of characters for a specific length
-function makePw(length) {
-  var result           = '';
-  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-  var charactersLength = characters.length;
-  for ( var i = 0; i < length; i++ ) {
-     result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-}
 
 // Configure Passport authenticated session persistence.
 //
@@ -135,8 +95,14 @@ passport.deserializeUser(async (serializedUser, done) => {
   return done(null, serializedUser);
 });
 
+const onError = (res) => (err) => {
+  /* eslint-disable-next-line no-console */
+  console.error('Unhandled error with Passport Middleware', err);
+  res.redirect('/');
+};
+
 // export middleware to wrap api/auth handlers
-export const passportMiddleware = (fn) => (req, res) => {
+export const passportMiddleware = (fn) => (req, res, next) => {
   if (!res.redirect) {
     // passport.js needs res.redirect:
     // https://github.com/jaredhanson/passport/blob/1c8ede/lib/middleware/authenticate.js#L261
@@ -158,7 +124,7 @@ export const passportMiddleware = (fn) => (req, res) => {
     passport.initialize()(req, res, () =>
       passport.session()(req, res, () =>
         // call wrapped api route as innermost handler
-        fn(req, res)
+        fn(req, res, next || onError(res))
       )
     )
   );
