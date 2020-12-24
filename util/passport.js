@@ -37,7 +37,7 @@ passport.use(
         SELECT * FROM metaserver_login_tokens where steam_id = ${profile.id}
       `);
 
-      if (!existingUser) {
+      if (!existingUser.length) {
         const password = makePw(6);
         const rowNum = await mySQLClient.query(`
           SELECT COUNT(*) from metaserver_users
