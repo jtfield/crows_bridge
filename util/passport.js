@@ -38,14 +38,15 @@ passport.use(
       `);
 
       if (!existingUser.length) {
+        // TODO run all this in a DB transaction
         const password = makePw(6);
-        const rowNum = await mySQLClient.query(`
-          SELECT COUNT(*) from metaserver_users
+        const countQuery = await mySQLClient.query(`
+          SELECT COUNT(*) as rowCount from metaserver_users
         `);
+        const { rowCount } = countQuery[0];
 
-        const newLoginNum = (1 + Number(rowNum)).toString;
-
-        const newLogin = `u${newLoginNum}`;
+        const userId = 1 + Number(rowCount);
+        const userName = `u${userId}`;
 
         await mySQLClient.query(`
           INSERT INTO metaserver_users (nick_name, team_name, city, state, country, quote)
@@ -53,8 +54,8 @@ passport.use(
         `);
 
         const insertedUser = await mySQLClient.query(`
-          INSERT INTO metaserver_login_tokens (steam_id, user_name_token, password_token)
-          VALUES(${profile.id}, ${newLogin}, ${password})
+          INSERT INTO metaserver_login_tokens (steam_id, user_id, user_name_token, password_token)
+          VALUES('${profile.id}', '${userId}', '${userName}', '${password}')
         `);
 
         return done(null, insertedUser);
