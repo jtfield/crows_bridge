@@ -49,7 +49,7 @@ passport.use(
 
         await mySQLClient.query(`
           INSERT INTO metaserver_users (nick_name, team_name, city, state, country, quote)
-          VALUES('default', 'default\'s Team', 'default', 'default', 'default', 'default')
+          VALUES('default', 'default's Team', 'default', 'default', 'default', 'default')
         `);
 
         const insertedUser = await mySQLClient.query(`
