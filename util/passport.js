@@ -6,7 +6,7 @@ import SteamStrategy from 'passport-steam';
 import { mySQLClient } from './mysql';
 
 const createSteamStrategy = (callback) => {
-  const hostname = process.env.IS_DEPLOYED === 'true' ? 'https://crowsbridge.net' : 'http://localhost:3000';
+  const hostname = process.env.VERCEL_ENV === 'production' ? 'https://crowsbridge.net' : 'http://localhost:3000';
 
   const steamStrategy = new SteamStrategy(
     {
